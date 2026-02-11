@@ -14,15 +14,15 @@ class WaterError(GardenError):
 def check_plant_health(plant_name: str, water_level: int,
                        sunlight_hours: int) -> str:
     if not plant_name:
-        raise ValueError("Plant name cannot be empty!")
+        raise PlantError("Plant name cannot be empty!")
     if water_level < 1:
-        raise ValueError(f"Water level {water_level} is too low (min 1)")
+        raise WaterError(f"Water level {water_level} is too low (min 1)")
     if water_level > 10:
-        raise ValueError(f"Water level {water_level} is too high (max 10)")
+        raise WaterError(f"Water level {water_level} is too high (max 10)")
     if sunlight_hours < 2:
-        raise ValueError(f"Sunlight hours {sunlight_hours} is too low (min 2)")
+        raise PlantError(f"Sunlight hours {sunlight_hours} is too low (min 2)")
     if sunlight_hours > 12:
-        raise ValueError(f"Sunlight hours {sunlight_hours}"
+        raise PlantError(f"Sunlight hours {sunlight_hours}"
                          f" is too high (max 12)")
     return (
             f"{plant_name}: healthy"
@@ -59,7 +59,7 @@ class GardenManager:
             try:
                 result = check_plant_health(plant, water, sun)
                 print(result)
-            except ValueError as e:
+            except GardenError as e:
                 print(f"Error checking {plant}: {e}")
 
 
@@ -84,6 +84,4 @@ def test_garden_management():
     except GardenError as e:
         print(f"Caught GardenError: {e}")
         print("System recovered and continuing...")
-
     print("Garden management system test complete!")
-
