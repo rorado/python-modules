@@ -3,17 +3,20 @@ def garden_operations() -> None:
     """Demonstrates catching common Python errors with try-except."""
 
     print("Testing ValueError...")
+
     try:
         int("abc")
     except ValueError:
         print("Caught ValueError: invalid literal for int()")
 
+    print()
     print("Testing ZeroDivisionError...")
     try:
         10 / 0
     except ZeroDivisionError:
         print("Caught ZeroDivisionError: division by zero")
 
+    print()
     print("Testing FileNotFoundError...")
     try:
         file = open("file.txt")
@@ -21,6 +24,7 @@ def garden_operations() -> None:
     except FileNotFoundError:
         print("Caught FileNotFoundError: No such file 'file.txt'")
 
+    print()
     print("Testing KeyError...")
     try:
         plants = {"tomato": 5}
@@ -28,6 +32,7 @@ def garden_operations() -> None:
     except KeyError:
         print("Caught KeyError: banana")
 
+    print()
     print("Testing multiple errors together...")
     try:
         int("abc") / 0
@@ -36,7 +41,7 @@ def garden_operations() -> None:
 
 
 def test_error_types() -> None:
-    """Runs garden_operations to show error handling in action."""
     print("=== Garden Error Types Demo ===")
     garden_operations()
-    print("All error types tested successfully!")
+
+    print("\nAll error types tested successfully!")
