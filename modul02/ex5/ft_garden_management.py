@@ -86,4 +86,3 @@ def test_garden_management():
         print("System recovered and continuing...")
 
     print("Garden management system test complete!")
-

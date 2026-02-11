@@ -1,5 +1,7 @@
 
 def garden_operations() -> None:
+    """Demonstrates catching common Python errors with try-except."""
+
     print("Testing ValueError...")
     try:
         int("abc")
@@ -34,6 +36,7 @@ def garden_operations() -> None:
 
 
 def test_error_types() -> None:
+    """Runs garden_operations to show error handling in action."""
     print("=== Garden Error Types Demo ===")
     garden_operations()
     print("All error types tested successfully!")

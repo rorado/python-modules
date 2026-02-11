@@ -1,7 +1,6 @@
 def water_plants(plant_list: list) -> None:
-    """
-        Waters each plant in plant_list.
-    """
+    """Waters each plant in the list and handles invalid plants gracefully."""
+
     print("Opening watering system")
     try:
         for plant in plant_list:
@@ -15,6 +14,8 @@ def water_plants(plant_list: list) -> None:
 
 
 def test_watering_system() -> None:
+    """Tests the watering system with valid and invalid plant lists."""
+
     print("=== Garden Watering System ===")
 
     print("Testing normal watering...")

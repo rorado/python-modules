@@ -22,8 +22,9 @@ def check_plant_health(plant_name: str, water_level: int,
 
 
 def test_plant_checks() -> None:
-    print("=== Garden Plant Health Checker ===")
+    """Tests check_plant_health with valid and invalid plant data."""
 
+    print("=== Garden Plant Health Checker ===")
     print("Testing good values...")
     try:
         msg = check_plant_health("tomato", 5, 8)
