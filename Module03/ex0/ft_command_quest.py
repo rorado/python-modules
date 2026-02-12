@@ -8,7 +8,7 @@ def print_arguments(length: int, arguments: list):
 
 def ft_command_quest():
     print("=== Command Quest ===")
-    if len(sys.argv) == 1:
+    if len(sys.argv) == 1: 
         print("No arguments provided!")
         print(f"Program name: {sys.argv[0]}")
         print(f"Total arguments: {len(sys.argv)}")
