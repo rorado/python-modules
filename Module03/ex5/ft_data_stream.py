@@ -3,12 +3,13 @@ from typing import Generator
 
 def game_event_stream(count: int) -> Generator[str, None, None]:
     players = ("alice", "bob", "charlie")
-    actions = ("killed monster", "found treasure", "leveled up", "found secret room", )
+    actions = ("killed monster", "found treasure",
+               "leveled up", "found secret room", )
 
     for i in range(count):
         player = players[i % len(players)]
         level = (i % 15) + 1
-        action = actions[(i - 1) % len(actions)]
+        action = actions[(i) % len(actions)]
         yield f"Player {player} (level {level}) {action}"
 
 
@@ -59,7 +60,7 @@ def main() -> None:
             event = next(stream)
             total += 1
 
-            if total <= 3:
+            if total <= 5:
                 print(f"Event {total}: {event}")
             elif total == 4:
                 print("...")
@@ -74,7 +75,7 @@ def main() -> None:
 
             if "leveled up" in event:
                 level_up += 1
-            
+
             if "found secret room" in event:
                 secret_room += 1
 
@@ -128,5 +129,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

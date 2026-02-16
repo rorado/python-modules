@@ -30,7 +30,6 @@ def main() -> None:
 
     print("=== Achievement Analytics ===")
 
-    # Union: all unique achievements
     all_achievements = (
         alice_achievements
         .union(bob_achievements)
@@ -40,7 +39,6 @@ def main() -> None:
     print(f"All unique achievements: {all_achievements}")
     print(f"Total unique achievements: {len(all_achievements)}")
 
-    # Intersection: achievements common to all players
     common_achievements = (
         alice_achievements
         .intersection(bob_achievements)
@@ -49,7 +47,6 @@ def main() -> None:
 
     print(f"Common to all players: {common_achievements}")
 
-    # Rare achievements (owned by only one player)
     rare_achievements = (
         all_achievements
         .difference(alice_achievements.intersection(bob_achievements))
@@ -59,7 +56,6 @@ def main() -> None:
 
     print(f"Rare achievements (1 player): {rare_achievements}")
 
-    # Player comparisons
     alice_bob_common = alice_achievements.intersection(bob_achievements)
     alice_unique = alice_achievements.difference(bob_achievements)
     bob_unique = bob_achievements.difference(alice_achievements)
@@ -71,4 +67,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

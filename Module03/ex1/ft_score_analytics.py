@@ -1,5 +1,6 @@
 import sys
 
+
 def store_scores(length: int, arguments: list) -> list:
     scores = []
     i = 0
@@ -12,7 +13,8 @@ def store_scores(length: int, arguments: list) -> list:
         i += 1
     return scores
 
-def ft_score_analytics(scores: list):
+
+def ft_score_analytics(scores: list) -> None:
 
     if not scores:
         print("No valid scores to analyze.")
@@ -32,11 +34,13 @@ def ft_score_analytics(scores: list):
     print(f"Low score: {lowest_score}")
     print(f"Score range: {score_range}")
 
+
 if __name__ == "__main__":
     print("=== Player Score Analytics ===")
 
     if len(sys.argv) == 1:
-        print("No scores provided. Usage: python3 ft_score_analytics.py <score1> <score2> ...")
+        print("No scores provided. Usage: python3"
+              " ft_score_analytics.py <score1> <score2> ...")
     else:
         scores = store_scores(len(sys.argv) - 1, sys.argv[1:])
         print(f"Scores processed: {scores}")

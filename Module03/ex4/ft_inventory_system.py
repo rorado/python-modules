@@ -55,7 +55,6 @@ def main() -> None:
         else:
             categories["Moderate"][item] = qty
 
-
     print()
     print("=== Item Categories ===")
     print(f"Moderate: {categories['Moderate']}")
