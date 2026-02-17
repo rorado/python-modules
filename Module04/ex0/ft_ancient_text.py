@@ -8,7 +8,7 @@ def main() -> None:
         print("Connection established...")
         recovered_data = vault.read()
         print("RECOVERED DATA:")
-        print(recovered_data, end="" if recovered_data.endswith("\n") else "\n")
+        print(recovered_data)
         vault.close()
         print("Data recovery complete. Storage unit disconnected.")
     except FileNotFoundError:

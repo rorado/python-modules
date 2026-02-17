@@ -4,7 +4,7 @@ from typing import Generator
 def game_event_stream(count: int) -> Generator[str, None, None]:
     players = ("alice", "bob", "charlie")
     actions = ("killed monster", "found treasure",
-               "leveled up", "found secret room", )
+               "leveled up", "found secret room")
 
     for i in range(count):
         player = players[i % len(players)]
