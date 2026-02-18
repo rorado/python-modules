@@ -4,7 +4,7 @@ def main() -> None:
     print(f"Accessing Storage Vault: {filename}")
 
     try:
-        vault = open(filename, "r", encoding="utf-8")
+        vault = open(filename, "r")
         print("Connection established...")
         recovered_data = vault.read()
         print("RECOVERED DATA:")

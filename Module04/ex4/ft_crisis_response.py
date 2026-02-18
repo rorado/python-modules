@@ -1,25 +1,12 @@
-from typing import Final
+# ft_crisis_response.py
 
+def handle_crisis(filename: str) -> None:
 
-LOST_ARCHIVE: Final[str] = "lost_archive.txt"
-CLASSIFIED_VAULT: Final[str] = "classified_vault.txt"
-STANDARD_ARCHIVE: Final[str] = "standard_archive.txt"
-
-
-def handle_archive_access(filename: str) -> None:
-    if filename == STANDARD_ARCHIVE:
-        print(f"ROUTINE ACCESS: Attempting access to '{filename}'...")
-    else:
-        print(f"CRISIS ALERT: Attempting access to '{filename}'...")
-
+    print(f"CRISIS ALERT: Attempting access to '{filename}'...")
     try:
-        if filename == CLASSIFIED_VAULT:
-            raise PermissionError("Security protocols deny access")
-
-        with open(filename, "r", encoding="utf-8") as archive:
-            content = archive.read().strip()
-
-        print(f"SUCCESS: Archive recovered - ''{content}''")
+        with open(filename, "r") as vault:
+            data = vault.read()
+        print(f"SUCCESS: Archive recovered - {data}")
         print("STATUS: Normal operations resumed")
     except FileNotFoundError:
         print("RESPONSE: Archive not found in storage matrix")
@@ -27,19 +14,23 @@ def handle_archive_access(filename: str) -> None:
     except PermissionError:
         print("RESPONSE: Security protocols deny access")
         print("STATUS: Crisis handled, security maintained")
-    except Exception:
-        print("RESPONSE: Unexpected system anomaly detected")
-        print("STATUS: Crisis handled, diagnostics complete")
+    except Exception as e:
+        print(f"RESPONSE: Unexpected error - {e}")
+        print("STATUS: Crisis handled, system stable")
 
 
 def main() -> None:
-    print("=== CYBER ARCHIVES - CRISIS RESPONSE SYSTEM ===")
+    print("=== CYBER ARCHIVES - CRISIS RESPONSE SYSTEM ===\n")
 
-    handle_archive_access(LOST_ARCHIVE)
-    handle_archive_access(CLASSIFIED_VAULT)
-    handle_archive_access(STANDARD_ARCHIVE)
+    test_files = [
+        "lost_archive.txt",
+        "classified_vault.txt",
+        "standard_archive.txt"
+    ]
 
-    print("All crisis scenarios handled successfully. Archives secure.")
+    for file in test_files:
+        handle_crisis(file)
+        print()
 
 
 if __name__ == "__main__":
