@@ -15,6 +15,7 @@ class DataProcessor(ABC):
         return f"Output: {result}"
 
 
+
 class NumericProcessor(DataProcessor):
     def process(self, data):
 
