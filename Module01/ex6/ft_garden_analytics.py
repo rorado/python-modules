@@ -17,7 +17,8 @@ class Plant:
 
 class FloweringPlant(Plant):
 
-    def __init__(self, name: str, height: int, color: str, is_blooming: bool = True) -> None:
+    def __init__(self, name: str, height: int, color: str,
+                 is_blooming: bool = True) -> None:
         super().__init__(name, height)
         self.color = color
         self.is_blooming = is_blooming
@@ -30,13 +31,15 @@ class FloweringPlant(Plant):
 
 class PrizeFlower(FloweringPlant):
 
-    def __init__(self, name: str, height: int, color: str, prize_points: int) -> None:
+    def __init__(self, name: str, height: int,
+                 color: str, prize_points: int) -> None:
         super().__init__(name, height, color)
         self.prize_points = prize_points
         self.kind = "prize"
 
     def display_info(self) -> str:
-        return f"{self.name}: {self.height}cm, {self.color} flowers (blooming), Prize points: {self.prize_points}"
+        return (f"{self.name}: {self.height}cm, {self.color} "
+                f"flowers (blooming), Prize points: {self.prize_points}")
 
 
 class GardenManager:
@@ -67,7 +70,8 @@ class GardenManager:
                 print(f"- {plant.display_info()}")
 
             print()
-            print(f"Plants added: {stats.total_plants()}, Total growth: {stats.total_growth()}cm")
+            print(f"Plants added: {stats.total_plants()},"
+                  f" Total growth: {stats.total_growth()}cm")
             print(f"Plant types: {stats.display_count_types()}")
             print()
             print(f"Height validation test: {stats.validate_heights()}")

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Any, Optional, Dict, Union
 
+
 class DataStream(ABC):
 
     @abstractmethod
@@ -79,7 +80,8 @@ class TransactionStream(DataStream):
                 count += 1
 
         sign = "" if net_flow < 0 else "+"
-        return f"{count} operations processed, net flow: {sign}{net_flow} units"
+        return (f"{count} operations processed, "
+                f"net flow: {sign}{net_flow} units")
 
     def filter_data(
         self,
@@ -154,7 +156,6 @@ class EventStream(DataStream):
         }
 
 
-
 class StreamProcessor:
 
     def __init__(self, streams: List[DataStream]) -> None:
@@ -172,7 +173,8 @@ class StreamProcessor:
                 if isinstance(stream, SensorStream):
                     print("Initializing Sensor Stream...")
                     stats = stream.get_stats()
-                    print("Stream ID: " + stats["stream_id"] + ", Type: " + stats["type"])
+                    print("Stream ID: " + stats["stream_id"] +
+                          ", Type: " + stats["type"])
                     filtered = stream.filter_data(batch)
                     result = stream.process_batch(filtered)
                     print("Sensor analysis: " + result + "\n")
@@ -180,7 +182,8 @@ class StreamProcessor:
                 elif isinstance(stream, TransactionStream):
                     print("Initializing Transaction Stream...")
                     stats = stream.get_stats()
-                    print("Stream ID: " + stats["stream_id"] + ", Type: " + stats["type"])
+                    print("Stream ID: " + stats["stream_id"] +
+                          ", Type: " + stats["type"])
                     filtered = stream.filter_data(batch)
                     result = stream.process_batch(filtered)
                     print("Transaction analysis: " + result + "\n")
@@ -188,14 +191,16 @@ class StreamProcessor:
                 elif isinstance(stream, EventStream):
                     print("Initializing Event Stream...")
                     stats = stream.get_stats()
-                    print("Stream ID: " + stats["stream_id"] + ", Type: " + stats["type"])
+                    print("Stream ID: " + stats["stream_id"] +
+                          ", Type: " + stats["type"])
                     filtered = stream.filter_data(batch)
                     result = stream.process_batch(filtered)
                     print("Event analysis: " + result + "\n")
 
             except Exception as e:
                 stats = stream.get_stats()
-                print(f"Error processing stream {stats.get('stream_id', 'Unknown')}: {e}\n")
+                print(f"Error processing stream"
+                      f"{stats.get('stream_id', 'Unknown')}: {e}\n")
             i += 1
 
     def process_polymorphic(self, batches: List[List[Any]], len: int) -> None:
@@ -215,7 +220,8 @@ class StreamProcessor:
 
                 print("- " + stats["type"] + ": " + result)
             except Exception as e:
-                print(f"Error processing stream {stats.get('stream_id', 'Unknown')}: {e}\n")
+                print(f"Error processing stream"
+                      f"{stats.get('stream_id', 'Unknown')}: {e}\n")
 
             i += 1
 
