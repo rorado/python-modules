@@ -4,303 +4,245 @@ from typing import Any, Dict, List, Protocol, Union
 
 
 class ProcessingStage(Protocol):
-
-	def process(self, data: Any) -> Any:
-		...
+    def process(self, data: Any) -> Any:
+        ...
 
 
 class InputStage:
 
-	def process(self, data: Any) -> Any:
-		if isinstance(data, dict):
-			return data
+    def process(self, data: Any) -> Any:
 
-		if isinstance(data, str):
-			text = data.strip()
+        if isinstance(data, dict):
+            return data
 
-			if text.startswith("{") and text.endswith("}"):
-				content = text[1:-1].strip()
-				if not content:
-					return {}
+        if isinstance(data, str):
 
-				pairs = [item.strip() for item in content.split(",") if item.strip()]
-				parsed: Dict[str, Any] = {}
+            has_comma = False
+            has_pipe = False
 
-				for pair in pairs:
-					if ":" not in pair:
-						continue
+            for c in data:
+                if c == ",":
+                    has_comma = True
+                if c == "|":
+                    has_pipe = True
 
-					left, right = pair.split(":", 1)
-					key = left.strip().strip('"')
-					raw_value = right.strip().strip('"')
+            if has_comma:
+                return {"csv_row": data}
 
-					if raw_value.replace(".", "", 1).isdigit():
-						if "." in raw_value:
-							parsed[key] = float(raw_value)
-						else:
-							parsed[key] = int(raw_value)
-					else:
-						parsed[key] = raw_value
+            if has_pipe:
+                return {"stream": data}
 
-				return parsed
+            return {"text": data}
 
-			if "," in text:
-				return {"csv_row": text}
-
-			return {"stream": text}
-
-		return {"stream": str(data)}
+        return {"text": data}
 
 
 class TransformStage:
 
-	def process(self, data: Any) -> Any:
-		if not isinstance(data, dict):
-			raise TypeError("TransformStage expects dictionary input")
+    def process(self, data: Any) -> Any:
 
-		transformed = {key: value for key, value in data.items()}
+        if not isinstance(data, dict):
+            raise TypeError
 
-		if "sensor" in transformed and "value" in transformed:
-			value = transformed["value"]
-			if isinstance(value, (int, float)):
-				transformed["status"] = "Normal range" if value < 30 else "High"
-				transformed["meta"] = "enriched"
+        result = {}
 
-		if "csv_row" in transformed:
-			fields = [entry.strip() for entry in transformed["csv_row"].split(",")]
-			transformed["csv_fields"] = fields
-			transformed["csv_count"] = len(fields)
+        for k in data:
+            result[k] = data[k]
 
-		if "stream" in transformed:
-			events = [entry.strip() for entry in transformed["stream"].split("|") if entry.strip()]
-			transformed["events"] = events
-			transformed["event_count"] = len(events)
+        if "csv_row" in result:
 
-		return transformed
+            count = 1
+            for c in result["csv_row"]:
+                if c == ",":
+                    count += 1
+
+            result["csv_count"] = count
+
+        if "stream" in result:
+
+            count = 1
+            for c in result["stream"]:
+                if c == "|":
+                    count += 1
+
+            result["event_count"] = count
+
+        return result
 
 
 class OutputStage:
 
-	def process(self, data: Any) -> Any:
-		if not isinstance(data, dict):
-			raise TypeError("OutputStage expects dictionary input")
+    def process(self, data: Any) -> Any:
 
-		if "sensor" in data and "value" in data:
-			unit = data.get("unit", "")
-			return (
-				f"Processed temperature reading: {data['value']}{unit} "
-				f"({data.get('status', 'Unknown')})"
-			)
+        if not isinstance(data, dict):
+            raise TypeError
 
-		if "csv_fields" in data:
-			return f"User activity logged: {data.get('csv_count', 0)} fields processed"
+        if "csv_count" in data:
+            return f"CSV processed: {data['csv_count']}"
 
-		if "events" in data:
-			return f"Stream summary: {data.get('event_count', 0)} readings processed"
+        if "event_count" in data:
+            return f"Stream processed: {data['event_count']}"
 
-		return "Output generated"
+        return "Data processed"
 
 
 class ProcessingPipeline(ABC):
 
-	def __init__(self, pipeline_id: str, stages: List[ProcessingStage]) -> None:
-		self.pipeline_id = pipeline_id
-		self.stages = stages
-		self.stats: Counter[str] = Counter()
+    def __init__(self, pipeline_id: str, stages: List[ProcessingStage]):
 
-	def run_stages(self, data: Any) -> Any:
-		payload = data
-		for stage in self.stages:
-			payload = stage.process(payload)
-			self.stats["stage_calls"] += 1
+        self.pipeline_id = pipeline_id
+        self.stages = stages
+        self.stats = Counter()
 
-		self.stats["success"] += 1
-		return payload
+    def run_stages(self, data: Any) -> Any:
 
-	def record_error(self) -> None:
-		self.stats["errors"] += 1
+        payload = data
 
-	def get_stats(self) -> Dict[str, Union[str, int]]:
-		return {
-			"pipeline_id": self.pipeline_id,
-			"success": self.stats["success"],
-			"errors": self.stats["errors"],
-			"stage_calls": self.stats["stage_calls"]
-		}
+        for stage in self.stages:
+            payload = stage.process(payload)
+            self.stats["stage_calls"] += 1
 
-	@abstractmethod
-	def process(self, data: Any) -> Union[str, Any]:
-		pass
+        self.stats["success"] += 1
+        return payload
+
+    def record_error(self):
+        self.stats["errors"] += 1
+
+    def get_stats(self) -> Dict[str, Union[str, int]]:
+
+        return {
+            "pipeline_id": self.pipeline_id,
+            "success": self.stats["success"],
+            "errors": self.stats["errors"],
+            "stage_calls": self.stats["stage_calls"]
+        }
+
+    @abstractmethod
+    def process(self, data: Any) -> Union[str, Any]:
+        pass
 
 
 class JSONAdapter(ProcessingPipeline):
 
-	def __init__(self, pipeline_id: str, stages: List[ProcessingStage]) -> None:
-		super().__init__(pipeline_id, stages)
+    def process(self, data: Any):
 
-	def process(self, data: Any) -> Union[str, Any]:
-		try:
-			print("Processing JSON data through pipeline...")
-			print(f"Input: {data}")
-			result = self.run_stages(data)
-			print("Transform: Enriched with metadata and validation")
-			print(f"Output: {result}")
-			return result
-		except Exception:
-			self.record_error()
-			raise
+        try:
+            print("JSON pipeline")
+            print(data)
+            result = self.run_stages(data)
+            print(result)
+            return result
+
+        except Exception:
+            self.record_error()
+            raise
 
 
 class CSVAdapter(ProcessingPipeline):
 
-	def __init__(self, pipeline_id: str, stages: List[ProcessingStage]) -> None:
-		super().__init__(pipeline_id, stages)
+    def process(self, data: Any):
 
-	def process(self, data: Any) -> Union[str, Any]:
-		try:
-			print("Processing CSV data through same pipeline...")
-			print(f"Input: {data}")
-			result = self.run_stages(data)
-			print("Transform: Parsed and structured data")
-			print(f"Output: {result}")
-			return result
-		except Exception:
-			self.record_error()
-			raise
+        try:
+            print("CSV pipeline")
+            print(data)
+            result = self.run_stages(data)
+            print(result)
+            return result
+
+        except Exception:
+            self.record_error()
+            raise
 
 
 class StreamAdapter(ProcessingPipeline):
 
-	def __init__(self, pipeline_id: str, stages: List[ProcessingStage]) -> None:
-		super().__init__(pipeline_id, stages)
+    def process(self, data: Any):
 
-	def process(self, data: Any) -> Union[str, Any]:
-		try:
-			print("Processing Stream data through same pipeline...")
-			print(f"Input: {data}")
-			result = self.run_stages(data)
-			print("Transform: Aggregated and filtered")
-			print(f"Output: {result}")
-			return result
-		except Exception:
-			self.record_error()
-			raise
+        try:
+            print("Stream pipeline")
+            print(data)
+            result = self.run_stages(data)
+            print(result)
+            return result
+
+        except Exception:
+            self.record_error()
+            raise
 
 
 class NexusManager:
 
-	def __init__(self) -> None:
-		self.pipelines: List[ProcessingPipeline] = []
-		self.by_id: Dict[str, ProcessingPipeline] = {}
+    def __init__(self):
 
-	def add_pipeline(self, pipeline: ProcessingPipeline) -> None:
-		self.pipelines.append(pipeline)
-		self.by_id[pipeline.pipeline_id] = pipeline
+        self.pipelines: List[ProcessingPipeline] = []
+        self.by_id: Dict[str, ProcessingPipeline] = {}
 
-	def run_all(self, payloads: Dict[str, Any]) -> None:
-		for pipeline in self.pipelines:
-			payload = payloads.get(pipeline.pipeline_id)
-			if payload is None:
-				continue
+    def add_pipeline(self, pipeline: ProcessingPipeline):
 
-			try:
-				pipeline.process(payload)
-			except Exception as error:
-				print(f"Pipeline {pipeline.pipeline_id} failed: {error}")
+        self.pipelines.append(pipeline)
+        self.by_id[pipeline.pipeline_id] = pipeline
 
-	def chain(self, pipeline_ids: List[str], data: Any) -> Any:
-		payload = data
+    def run_all(self, payloads: Dict[str, Any]):
 
-		for pipeline_id in pipeline_ids:
-			pipeline = self.by_id[pipeline_id]
-			payload = pipeline.process(payload)
+        for p in self.pipelines:
 
-		return payload
+            if p.pipeline_id in payloads:
 
-	def recover_and_process(
-		self,
-		primary_id: str,
-		backup_id: str,
-		data: Any
-	) -> Union[str, Any]:
-		try:
-			return self.by_id[primary_id].process(data)
-		except Exception as error:
-			print("Recovery initiated: Switching to backup processor")
-			print(f"Primary failure: {error}")
-			return self.by_id[backup_id].process(data)
+                try:
+                    p.process(payloads[p.pipeline_id])
 
-	def print_stats(self) -> None:
-		print("\n=== Pipeline Statistics ===")
-		for pipeline in self.pipelines:
-			stats = pipeline.get_stats()
-			print(
-				f"{stats['pipeline_id']}: "
-				f"success={stats['success']}, "
-				f"errors={stats['errors']}, "
-				f"stage_calls={stats['stage_calls']}"
-			)
+                except Exception as e:
+                    print("Pipeline error")
+                    print(e)
+
+    def chain(self, pipeline_ids: List[str], data: Any):
+
+        payload = data
+
+        for pid in pipeline_ids:
+            payload = self.by_id[pid].process(payload)
+
+        return payload
+
+    def print_stats(self):
+
+        for p in self.pipelines:
+            print(p.get_stats())
 
 
-def main() -> None:
-	print("=== CODE NEXUS - ENTERPRISE PIPELINE SYSTEM ===")
-	print("Initializing Nexus Manager...")
-	print("Pipeline capacity: 1000 streams/second")
-	print("Creating Data Processing Pipeline...")
-	print("Stage 1: Input validation and parsing")
-	print("Stage 2: Data transformation and enrichment")
-	print("Stage 3: Output formatting and delivery")
+def main():
 
-	shared_stages: List[ProcessingStage] = [
-		InputStage(),
-		TransformStage(),
-		OutputStage()
-	]
+    stages = [
+        InputStage(),
+        TransformStage(),
+        OutputStage()
+    ]
 
-	json_pipeline = JSONAdapter("json_pipeline", shared_stages)
-	csv_pipeline = CSVAdapter("csv_pipeline", shared_stages)
-	stream_pipeline = StreamAdapter("stream_pipeline", shared_stages)
+    json_pipeline = JSONAdapter("json_pipeline", stages)
+    csv_pipeline = CSVAdapter("csv_pipeline", stages)
+    stream_pipeline = StreamAdapter("stream_pipeline", stages)
 
-	manager = NexusManager()
-	manager.add_pipeline(json_pipeline)
-	manager.add_pipeline(csv_pipeline)
-	manager.add_pipeline(stream_pipeline)
+    manager = NexusManager()
 
-	print("\n=== Multi-Format Data Processing ===")
-	manager.run_all({
-		"json_pipeline": '{"sensor":"temp","value":23.5,"unit":"°C"}',
-		"csv_pipeline": "user,action,timestamp",
-		"stream_pipeline": "22.0|23.1|21.4|22.9|21.0"
-	})
+    manager.add_pipeline(json_pipeline)
+    manager.add_pipeline(csv_pipeline)
+    manager.add_pipeline(stream_pipeline)
 
-	print("\n=== Pipeline Chaining Demo ===")
-	print("Pipeline A -> Pipeline B -> Pipeline C")
-	print("Data flow: Raw -> Processed -> Analyzed -> Stored")
+    manager.run_all({
+        "json_pipeline": {"sensor": "temp", "value": 20},
+        "csv_pipeline": "a,b,c",
+        "stream_pipeline": "1|2|3|4"
+    })
 
-	chain_a = JSONAdapter("chain_a", [InputStage(), TransformStage()])
-	chain_b = JSONAdapter("chain_b", [InputStage(), TransformStage()])
-	chain_c = StreamAdapter("chain_c", [OutputStage()])
+    result = manager.chain(
+        ["json_pipeline", "csv_pipeline"],
+        "x,y,z"
+    )
 
-	manager.add_pipeline(chain_a)
-	manager.add_pipeline(chain_b)
-	manager.add_pipeline(chain_c)
+    print(result)
 
-	result = manager.chain(
-		["chain_a", "chain_b", "chain_c"],
-		'{"sensor":"temp","value":26.1,"unit":"°C"}'
-	)
-
-	print(f"Chain result: {result}")
-	print("Performance: efficiency monitoring active")
-
-	print("\n=== Error Recovery Test ===")
-	print("Simulating pipeline failure...")
-	manager.recover_and_process("csv_pipeline", "stream_pipeline", 42)
-	print("Recovery successful: Pipeline restored, processing resumed")
-
-	manager.print_stats()
-	print("Nexus Integration complete. All systems operational.")
+    manager.print_stats()
 
 
 if __name__ == "__main__":
-	main()
+    main()
