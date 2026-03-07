@@ -123,7 +123,7 @@ class StreamAdapter(ProcessingPipeline):
     def process(self, data: Any):
         try:
             print("\nProcessing Stream data through same pipeline...")
-            print("Input: Real-time sensor stream")
+            print(f"Input: \"{data}\"")
             result = self.run_stages(data)
             print("Transform: Aggregated and filtered")
             print(f"Output: {result}")
@@ -201,8 +201,7 @@ def main():
         ["json_pipeline", "csv_pipeline", "stream_pipeline"],
         "sensor,value,unit"
     )
-    print(f"Chain result: {chain_result}")
-    print("Performance: 95% efficiency, 0.2s total processing time")
+    print(f"\nChain result: {chain_result}")
 
     manager.error_recovery()
     manager.print_stats()
