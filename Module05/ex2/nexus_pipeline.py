@@ -103,12 +103,12 @@ class ProcessingPipeline(ABC):
         }
 
     @abstractmethod
-    def process(self, data: Any) -> Any:
+    def process(self, data: Any) -> Union[str, Any]:
         ...
 
 
 class JSONAdapter(ProcessingPipeline):
-    def process(self, data: Any) -> Any:
+    def process(self, data: Any) -> Union[str, Any]:
         try:
             print("Processing JSON data through pipeline...")
             print(f"Input: {data}")
@@ -123,7 +123,7 @@ class JSONAdapter(ProcessingPipeline):
 
 
 class CSVAdapter(ProcessingPipeline):
-    def process(self, data: Any) -> Any:
+    def process(self, data: Any) -> Union[str, Any]:
         try:
             print("\nProcessing CSV data through same pipeline...")
             print(f"Input: \"{data}\"")
@@ -138,7 +138,7 @@ class CSVAdapter(ProcessingPipeline):
 
 
 class StreamAdapter(ProcessingPipeline):
-    def process(self, data: Any) -> Any:
+    def process(self, data: Any) -> Union[str, Any]:
         try:
             print("\nProcessing Stream data through same pipeline...")
             print(f"Input: \"{data}\"")
