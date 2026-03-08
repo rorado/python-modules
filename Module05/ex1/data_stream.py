@@ -91,7 +91,8 @@ class TransactionStream(DataStream):
 
         sign = "" if net_flow < 0 else "+"
 
-        return f"{count} operations processed, net flow: {sign}{net_flow} units"
+        return (f"{count} operations processed,"
+                f" net flow: {sign}{net_flow} units")
 
     def filter_data(
         self,
@@ -204,7 +205,8 @@ class StreamProcessor:
 
             i += 1
 
-    def process_polymorphic(self, batches: List[List[Any]], length: int) -> None:
+    def process_polymorphic(self, batches: List[List[Any]],
+                            length: int) -> None:
 
         print("\n=== Polymorphic Stream Processing ===")
         print("Processing mixed stream types through unified interface...\n")
