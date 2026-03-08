@@ -77,7 +77,8 @@ class OutputStage:
 
 
 class ProcessingPipeline(ABC):
-    def __init__(self, pipeline_id: str, stages: List[ProcessingStage]):
+    def __init__(self, pipeline_id: str,
+                 stages: List[ProcessingStage] | None = None) -> None:
         self.pipeline_id = pipeline_id
         self.stages = stages
         self.stats = Counter()
@@ -94,7 +95,7 @@ class ProcessingPipeline(ABC):
             self.record_error()
             raise
 
-    def record_error(self):
+    def record_error(self) -> None:
         self.stats["errors"] += 1
 
     def get_stats(self) -> Dict[str, Union[str, int]]:
@@ -111,7 +112,7 @@ class ProcessingPipeline(ABC):
 
 
 class JSONAdapter(ProcessingPipeline):
-    def process(self, data: Any):
+    def process(self, data: Any) -> None:
         try:
             print("Processing JSON data through pipeline...")
             print(f"Input: {data}")
@@ -125,7 +126,7 @@ class JSONAdapter(ProcessingPipeline):
 
 
 class CSVAdapter(ProcessingPipeline):
-    def process(self, data: Any):
+    def process(self, data: Any) -> None:
         try:
             print("\nProcessing CSV data through same pipeline...")
             print(f"Input: \"{data}\"")
@@ -139,7 +140,7 @@ class CSVAdapter(ProcessingPipeline):
 
 
 class StreamAdapter(ProcessingPipeline):
-    def process(self, data: Any):
+    def process(self, data: Any) -> None:
         try:
             print("\nProcessing Stream data through same pipeline...")
             print(f"Input: \"{data}\"")
@@ -158,11 +159,11 @@ class NexusManager:
         self.pipelines: List[ProcessingPipeline] = []
         self.by_id: Dict[str, ProcessingPipeline] = {}
 
-    def add_pipeline(self, pipeline: ProcessingPipeline):
+    def add_pipeline(self, pipeline: ProcessingPipeline) -> None:
         self.pipelines.append(pipeline)
         self.by_id[pipeline.pipeline_id] = pipeline
 
-    def run_all(self, payloads: Dict[str, Any]):
+    def run_all(self, payloads: Dict[str, Any]) -> None:
         print("\n=== Multi-Format Data Processing ===")
         for p in self.pipelines:
             if p.pipeline_id in payloads:
@@ -172,7 +173,7 @@ class NexusManager:
                     print(f"Pipeline {p.pipeline_id} failed: {e}")
             print(f"Pipeline {p.pipeline_id} stats: {p.get_stats()}")
 
-    def chain(self, pipeline_ids: List[str], data: Any):
+    def chain(self, pipeline_ids: List[str], data: Any) -> None:
         print("\n=== Pipeline Chaining Demo ===")
         print("Pipeline A -> Pipeline B -> Pipeline C")
         print("Data flow: Raw -> Processed -> Analyzed -> Stored")
@@ -181,7 +182,7 @@ class NexusManager:
             payload = self.by_id[pid].process(payload)
         return "Final output after chaining: " + str(payload)
 
-    def error_recovery(self):
+    def error_recovery(self) -> None:
         print("\n=== Error Recovery Test ===")
         print("Simulating pipeline failure...")
         try:
@@ -189,7 +190,7 @@ class NexusManager:
         except Exception:
             print("Recovery initiated: Switching to backup processor")
 
-    def print_stats(self):
+    def print_stats(self) -> None:
         print("Nexus Integration complete. All systems operational.")
 
 
