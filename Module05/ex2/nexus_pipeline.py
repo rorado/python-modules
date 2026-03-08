@@ -39,7 +39,10 @@ class TransformStage:
         if "text" in result:
             result["text_count"] = len(result["text"])
         if "sensor" in result and "value" in result:
-            result["status"] = "Normal range" if result["value"] < 30 else "High"
+            if result["value"] < 30:
+                result["status"] = "Normal range"
+            else:
+                result["status"] = "High"
         return result
 
 
@@ -48,14 +51,20 @@ class OutputStage:
         if not isinstance(data, dict):
             raise TypeError("Invalid data format")
         if "csv_count" in data:
-            return f"User activity logged: {data['csv_count']} actions processed"
+            return (f"User activity logged: "
+                    f"{data['csv_count']} actions processed")
         if "event_count" in data:
             avg = data.get("avg", 0)
-            return f"Stream summary: {data['event_count']} readings, avg: {round(avg,1)}°C"
+            return (f"Stream summary: "
+                    f"{data['event_count']} readings, avg: {round(avg,1)}°C")
         if "text_count" in data:
             return f"Text processed: {data['text_count']} characters"
         if "sensor" in data and "value" in data:
-            return f"Processed temperature reading: {data['value']}{data.get('unit','')} ({data.get('status','Unknown')})"
+            return (
+                f"Processed temperature reading: "
+                f"{data['value']}{data.get('unit','')} "
+                f"({data.get('status','Unknown')})"
+            )
         return "Data processed"
 
 
