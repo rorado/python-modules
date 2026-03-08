@@ -74,7 +74,6 @@ class ProcessingPipeline(ABC):
         stages: Optional[List[ProcessingStage]] = None
     ) -> None:
         self.pipeline_id = pipeline_id
-        # Default stages if not provided
         if stages is None:
             stages = [InputStage(), TransformStage(), OutputStage()]
         self.stages: List[ProcessingStage] = stages
@@ -191,7 +190,7 @@ class NexusManager:
             print("Recovery initiated: Switching to backup processor")
 
     def print_stats(self) -> None:
-        print("Nexus Integration complete. All systems operational.")
+        print("\nNexus Integration complete. All systems operational.")
 
 
 def main() -> None:
