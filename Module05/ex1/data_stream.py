@@ -258,8 +258,8 @@ class StreamProcessor:
                 count = 0
                 for _ in filtered:
                     count += 1
-
-                print(f"{count}  {name}, ", end="")
+                if (count > 0):
+                    print(f"{count}  {name}, ", end="")
 
             except Exception as e:
                 print(f"Error processing stream: {e}")
@@ -278,8 +278,8 @@ if __name__ == "__main__":
     batches: List[List[Any]] = [
         [{"temp": 22.5}, {"temp": 25.0}, {"temp": 20.0}],
         [
-            {"type": "buy", "amount": 100},
-            {"type": "sell", "amount": 150},
+            {"type": "buy", "amount": 41},
+            {"type": "sell", "amount": 10},
             {"type": "buy", "amount": 75}
         ],
         ["login", "error", "warning", "logout"]

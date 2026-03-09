@@ -3,7 +3,7 @@ import alchemy.elements
 
 
 def main() -> None:
-    print("=== Sacred Scroll Mastery ===")
+    print("\n=== Sacred Scroll Mastery ===\n")
 
     print("Testing direct module access:")
     print(
@@ -23,7 +23,7 @@ def main() -> None:
         f"{alchemy.elements.create_air()}"
     )
 
-    print("Testing package-level access (controlled by __init__.py):")
+    print("\nTesting package-level access (controlled by __init__.py):")
     print(f"alchemy.create_fire(): {alchemy.create_fire()}")
     print(f"alchemy.create_water(): {alchemy.create_water()}")
 
@@ -37,7 +37,7 @@ def main() -> None:
     except AttributeError:
         print("alchemy.create_air(): AttributeError - not exposed")
 
-    print("Package metadata:")
+    print("\nPackage metadata:")
     print(f"Version: {alchemy.__version__}")
     print(f"Author: {alchemy.__author__}")
 

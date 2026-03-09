@@ -5,25 +5,25 @@ from alchemy.potions import strength_potion
 
 
 def main() -> None:
-    print("=== Import Transmutation Mastery ===")
+    print("\n=== Import Transmutation Mastery ===")
 
-    print("Method 1 - Full module import:")
+    print("\nMethod 1 - Full module import:")
     print(
         "alchemy.elements.create_fire(): "
         f"{alchemy.elements.create_fire()}"
     )
 
-    print("Method 2 - Specific function import:")
+    print("\nMethod 2 - Specific function import:")
     print(f"create_water(): {create_water()}")
 
-    print("Method 3 - Aliased import:")
+    print("\nMethod 3 - Aliased import:")
     print(f"heal(): {heal()}")
 
-    print("Method 4 - Multiple imports:")
+    print("\nMethod 4 - Multiple imports:")
     print(f"create_fire(): {create_fire()}")
     print(f"strength_potion(): {strength_potion()}")
 
-    print("All import transmutation methods mastered!")
+    print("\nAll import transmutation methods mastered!")
 
 
 if __name__ == "__main__":
