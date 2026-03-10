@@ -1,10 +1,13 @@
-from alchemy.grimoire import record_spell, validate_ingredients
+try:
+    from alchemy.grimoire import record_spell, validate_ingredients
+except Exception as err:
+    print(err)
 
 
 def main() -> None:
     print("=== Circular Curse Breaking ===")
 
-    print("Testing ingredient validation:")
+    print("\nTesting ingredient validation:")
     print(
         'validate_ingredients("fire air"): '
         f'{validate_ingredients("fire air")}'
@@ -14,7 +17,7 @@ def main() -> None:
         f'{validate_ingredients("dragon scales")}'
     )
 
-    print("Testing spell recording with validation:")
+    print("\nTesting spell recording with validation:")
     print(
         'record_spell("Fireball", "fire air"): '
         f'{record_spell("Fireball", "fire air")}'
@@ -24,14 +27,17 @@ def main() -> None:
         f'{record_spell("Dark Magic", "shadow")}'
     )
 
-    print("Testing late import technique:")
+    print("\nTesting late import technique:")
     print(
         'record_spell("Lightning", "air"): '
         f'{record_spell("Lightning", "air")}'
     )
-    print("Circular dependency curse avoided using late imports!")
+    print("\nCircular dependency curse avoided using late imports!")
     print("All spells processed safely!")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as err:
+        print(err)

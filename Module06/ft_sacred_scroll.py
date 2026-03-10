@@ -1,5 +1,8 @@
-import alchemy
-import alchemy.elements
+try:
+    import alchemy
+    import alchemy.elements
+except Exception as err:
+    print(err)
 
 
 def main() -> None:
@@ -43,4 +46,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as err:
+        print(err)
