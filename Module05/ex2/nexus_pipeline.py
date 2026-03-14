@@ -55,14 +55,16 @@ class OutputStage:
         if "event_count" in data:
             avg = data.get("avg", 0)
             return (f"Stream summary: "
-                    f"{data['event_count']} readings, avg: {round(avg,1)}°C")
+                    f"{data['event_count']}"
+                    f" readings,"
+                    f" avg: {round(avg, 1)}°C")
         if "text_count" in data:
             return f"Text processed: {data['text_count']} characters"
         if "sensor" in data and "value" in data:
             return (
                 f"Processed temperature reading: "
-                f"{data['value']}{data.get('unit','')} "
-                f"({data.get('status','Unknown')})"
+                f"{data['value']}{data.get('unit', '')} "
+                f"({data.get('status', 'Unknown')})"
             )
         return "Data processed"
 
