@@ -1,12 +1,9 @@
-try:
-    import alchemy.transmutation
-    from alchemy.transmutation.basic import lead_to_gold, stone_to_gem
-    from alchemy.transmutation.advanced import (
-        philosophers_stone,
-        elixir_of_life
-    )
-except Exception as err:
-    print(err)
+import alchemy.transmutation
+from alchemy.transmutation.basic import lead_to_gold, stone_to_gem
+from alchemy.transmutation.advanced import (
+    philosophers_stone,
+    elixir_of_life
+)
 
 
 def main() -> None:

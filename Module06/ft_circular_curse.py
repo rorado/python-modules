@@ -1,7 +1,4 @@
-try:
-    from alchemy.grimoire import record_spell, validate_ingredients
-except Exception as err:
-    print(err)
+from alchemy.grimoire import record_spell, validate_ingredients
 
 
 def main() -> None:
@@ -32,6 +29,7 @@ def main() -> None:
         'record_spell("Lightning", "air"): '
         f'{record_spell("Lightning", "air")}'
     )
+
     print("\nCircular dependency curse avoided using late imports!")
     print("All spells processed safely!")
 
