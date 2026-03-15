@@ -14,14 +14,14 @@ def main():
     print("Playable:", dragon.is_playable(available_mana))
     print("Play result:", dragon.play({}))
 
-    print("Fire Dragon attacks Goblin Warrior:")
+    print("\nFire Dragon attacks Goblin Warrior:")
     print("Attack result:", dragon.attack_target("Goblin Warrior"))
 
     available_mana = 3
-    print(f"Testing insufficient mana ({available_mana} available):")
+    print(f"\nTesting insufficient mana ({available_mana} available):")
     print("Playable:", dragon.is_playable(available_mana))
 
-    print("Abstract pattern successfully demonstrated!")
+    print("\nAbstract pattern successfully demonstrated!")
 
 if __name__ == "__main__":
     main()
