@@ -1,6 +1,8 @@
 from typing import List
-from ex0.Card import Card
 import random
+
+from ex0.Card import Card
+
 
 class Deck:
     def __init__(self) -> None:
@@ -26,14 +28,25 @@ class Deck:
 
     def get_deck_stats(self) -> dict:
         total = len(self.cards)
-        creatures = sum(1 for c in self.cards if getattr(c, "attack", None) is not None)
-        spells = sum(1 for c in self.cards if getattr(c, "effect_type", None) is not None)
-        artifacts = sum(1 for c in self.cards if getattr(c, "durability", None) is not None)
+        creatures = 0
+        for c in self.cards:
+            if getattr(c, "attack", None) is not None:
+                creatures += 1
+
+        spells = 0
+        for c in self.cards:
+            if getattr(c, "effect_type", None) is not None:
+                spells += 1
+
+        artifacts = 0
+        for c in self.cards:
+            if getattr(c, "durability", None) is not None:
+                artifacts += 1
         avg_cost = sum(c.cost for c in self.cards) / total if total else 0
         return {
             "total_cards": total,
             "creatures": creatures,
             "spells": spells,
             "artifacts": artifacts,
-            "avg_cost": avg_cost
+            "avg_cost": f"{avg_cost:.2f}",
         }

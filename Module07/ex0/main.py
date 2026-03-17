@@ -1,5 +1,6 @@
 from ex0.CreatureCard import CreatureCard
 
+
 def main():
     print("=== DataDeck Card Foundation ===\n")
     print("Testing Abstract Base Class Design:")
@@ -22,6 +23,7 @@ def main():
     print("Playable:", dragon.is_playable(available_mana))
 
     print("\nAbstract pattern successfully demonstrated!")
+
 
 if __name__ == "__main__":
     main()
