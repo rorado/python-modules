@@ -21,7 +21,7 @@ class Deck:
     def shuffle(self) -> None:
         random.shuffle(self.cards)
 
-    def draw_card(self) -> Card:
+    def draw_card(self) -> Card | None:
         if self.cards:
             return self.cards.pop(0)
         return None
