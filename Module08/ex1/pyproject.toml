@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "matrix-loading"
+version = "0.1.0"
+description = "Exercise 1 dependency loading and matrix data analysis"
+authors = ["didara <didara@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+pandas = ">=2.1.0,<3.0.0"
+numpy = ">=1.26.0,<3.0.0"
+matplotlib = ">=3.7.0,<4.0.0"
+requests = ">=2.31.0,<3.0.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
