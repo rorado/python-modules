@@ -1,17 +1,12 @@
-"""Exercise 1 - Dependency loading and sample Matrix data analysis."""
-
-from __future__ import annotations
 
 import importlib
 import sys
 from typing import Any, Dict, Optional, Tuple
 
-
 DependencyResult = Tuple[bool, Optional[str], Optional[str], Optional[Any]]
 
 
 def check_dependency(module_name: str, package_name: str) -> DependencyResult:
-    """Try to import a module and return (ok, display_name, version, module)."""
     try:
         module = importlib.import_module(module_name)
         version = getattr(module, "__version__", "unknown")
@@ -21,7 +16,6 @@ def check_dependency(module_name: str, package_name: str) -> DependencyResult:
 
 
 def print_dependency_status(results: Dict[str, DependencyResult]) -> None:
-    """Display dependency checks with clear install guidance."""
     print("LOADING STATUS: Loading programs...")
     print("Checking dependencies:")
 
@@ -34,81 +28,62 @@ def print_dependency_status(results: Dict[str, DependencyResult]) -> None:
             all_ok = False
             print(f"[MISSING] {package_name} - Not installed")
 
-    print()
-    print("Dependency management options:")
-    print("- pip: use requirements.txt")
-    print("  pip install -r requirements.txt")
-    print("- Poetry: use pyproject.toml (+ poetry.lock)")
-    print("  poetry install")
-
     if not all_ok:
         print()
-        print("Missing dependencies detected. Install them, then rerun loading.py")
+        print("Missing dependencies detected."
+              " Install them, then rerun loading.py")
         return
 
     print()
-    print("All essential programs loaded successfully.")
 
 
 def run_analysis(results: Dict[str, DependencyResult]) -> None:
-    """Run a tiny data pipeline and generate a visualization."""
-    pandas_module = results["pandas"][3]
-    numpy_module = results["numpy"][3]
-    matplotlib_module = results["matplotlib"][3]
+    pd = results["pandas"][3]
+    np = results["numpy"][3]
 
-    if pandas_module is None or numpy_module is None or matplotlib_module is None:
+    if pd is None or np is None:
+        print("Cannot run analysis: pandas or numpy is missing.")
         return
 
     try:
-        pyplot = importlib.import_module("matplotlib.pyplot")
+        plt = importlib.import_module("matplotlib.pyplot")
     except Exception:
-        print("Unable to load matplotlib.pyplot, visualization skipped.")
+        print("Cannot draw plot: matplotlib.pyplot is missing.")
         return
-
     print("Analyzing Matrix data...")
-    np = numpy_module
-    pd = pandas_module
-    _ = matplotlib_module
 
-    points_count = 1000
+    points_count = 100
+    values = np.random.randint(1, 100, points_count)
+    data_frame = pd.DataFrame({
+            "index": np.arange(points_count),
+            "value": values
+        })
+
     print(f"Processing {points_count} data points...")
 
-    timeline = np.arange(points_count)
-    signal = np.sin(timeline / 25.0)
-    noise = np.random.normal(0.0, 0.15, points_count)
-    values = signal + noise
+    plt.figure(figsize=(19, 4))
+    plt.plot(
+            data_frame["index"],
+            data_frame["value"],
+            marker="o",
+            color="blue"
+        )
+    plt.title("Matrix Data Analysis")
+    plt.xlabel("Index")
+    plt.ylabel("Value")
+    plt.tight_layout()
 
-    data_frame = pd.DataFrame({"tick": timeline, "signal": values})
-    data_frame["moving_average"] = data_frame["signal"].rolling(window=30).mean()
-
-    print("Generating visualization...")
-    pyplot.figure(figsize=(10, 5))
-    pyplot.plot(data_frame["tick"], data_frame["signal"], label="Signal", alpha=0.5)
-    pyplot.plot(
-        data_frame["tick"],
-        data_frame["moving_average"],
-        label="Moving Average (30)",
-        linewidth=2,
-    )
-    pyplot.title("Matrix Stream Analysis")
-    pyplot.xlabel("Time Tick")
-    pyplot.ylabel("Signal Intensity")
-    pyplot.legend()
-    pyplot.tight_layout()
-
+    print("Generating visualization...\n")
     output_file = "matrix_analysis.png"
+    print("Analysis complete!")
     try:
-        pyplot.savefig(output_file)
-        print("Analysis complete!")
+        plt.savefig(output_file)
         print(f"Results saved to: {output_file}")
-    except Exception:
-        print("Analysis completed, but saving the figure failed.")
     finally:
-        pyplot.close()
+        plt.close()
 
 
 def main() -> None:
-    """Entrypoint for dependency checks and sample analysis."""
     dependency_map = {
         "pandas": ("pandas", "pandas"),
         "numpy": ("numpy", "numpy"),
@@ -122,7 +97,8 @@ def main() -> None:
 
     print_dependency_status(results)
 
-    essentials_ok = all(results[name][0] for name in ("pandas", "numpy", "matplotlib"))
+    essentials_ok = all(results[name][0]
+                        for name in ("pandas", "numpy", "matplotlib"))
     if not essentials_ok:
         sys.exit(1)
 

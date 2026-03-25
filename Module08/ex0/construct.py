@@ -6,7 +6,6 @@ import sys
 
 
 def is_virtual_environment() -> bool:
-    """Return True when Python runs inside a virtual environment."""
     return bool(
         getattr(sys, "real_prefix", None)
         or (hasattr(sys, "base_prefix") and sys.prefix != sys.base_prefix)
@@ -66,7 +65,6 @@ def print_inside_construct() -> None:
 
 def main() -> None:
 
-    # """Entrypoint for environment status report."""
     if is_virtual_environment():
         print_inside_construct()
         return
