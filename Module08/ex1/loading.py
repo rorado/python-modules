@@ -1,4 +1,3 @@
-
 import importlib
 import sys
 from typing import Any, Dict, Optional, Tuple
@@ -46,38 +45,41 @@ def run_analysis(results: Dict[str, DependencyResult]) -> None:
         return
 
     try:
-        plt = importlib.import_module("matplotlib.pyplot")
+        import matplotlib.pyplot as plt
+        import matplotlib
+        matplotlib.rcParams['font.family'] = 'DejaVu Sans'
     except Exception:
         print("Cannot draw plot: matplotlib.pyplot is missing.")
         return
+
     print("Analyzing Matrix data...")
 
-    points_count = 100
+    points_count = 10
     values = np.random.randint(1, 100, points_count)
     data_frame = pd.DataFrame({
-            "index": np.arange(points_count),
-            "value": values
-        })
+        "index": np.arange(points_count),
+        "value": values
+    })
 
     print(f"Processing {points_count} data points...")
 
-    plt.figure(figsize=(19, 4))
-    plt.plot(
+    try:
+        plt.figure(figsize=(19, 4))
+        plt.plot(
             data_frame["index"],
             data_frame["value"],
             marker="o",
             color="blue"
         )
-    plt.title("Matrix Data Analysis")
-    plt.xlabel("Index")
-    plt.ylabel("Value")
-    plt.tight_layout()
+        plt.title("Matrix Data Analysis")
+        plt.xlabel("Index")
+        plt.ylabel("Value")
+        plt.tight_layout()
 
-    print("Generating visualization...\n")
-    output_file = "matrix_analysis.png"
-    print("Analysis complete!")
-    try:
+        print("Generating visualization...\n")
+        output_file = "matrix_analysis.png"
         plt.savefig(output_file)
+        print("Analysis complete!")
         print(f"Results saved to: {output_file}")
     finally:
         plt.close()
@@ -106,4 +108,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as err:
+        print(err)

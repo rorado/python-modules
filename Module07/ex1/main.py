@@ -3,6 +3,7 @@ from ex1.SpellCard import SpellCard
 from ex1.ArtifactCard import ArtifactCard
 from ex1.Deck import Deck
 
+
 def main():
     print("\n=== DataDeck Deck Builder ===")
     print("Building deck with different card types...")
@@ -25,6 +26,7 @@ def main():
 
     print("Drawing and playing cards:\n")
     game_state = {}
+
     while card := deck.draw_card():
         print(f"Drew: {card.name} ({type(card).__name__})")
         result = card.play(game_state)
