@@ -36,7 +36,7 @@ class SpaceMission(BaseModel):
     budget_millions: float = Field(ge=1.0, le=10000.0)
 
     @model_validator(mode="after")
-    def validate_safety_rules(self) -> "SpaceMission":
+    def validate_safety_rules(self: "SpaceMission") -> "SpaceMission":
         if not self.mission_id.startswith("M"):
             raise ValueError('Mission ID must start with "M"')
 
@@ -82,50 +82,54 @@ def print_mission(mission: SpaceMission) -> None:
         )
 
 
+def crewData() -> List[CrewMember]:
+    crew1 = CrewMember(
+        member_id="C01",
+        name="Sarah Connor",
+        rank=Rank.COMMANDER,
+        age=42,
+        specialization="Mission Command",
+        years_experience=16,
+        is_active=True,
+    )
+    crew2 = CrewMember(
+        member_id="C02",
+        name="John Smith",
+        rank=Rank.LIEUTENANT,
+        age=34,
+        specialization="Navigation",
+        years_experience=7,
+        is_active=True,
+    )
+    crew3 = CrewMember(
+        member_id="C03",
+        name="Alice Johnson",
+        rank=Rank.OFFICER,
+        age=29,
+        specialization="Engineering",
+        years_experience=6,
+        is_active=True,
+    )
+    return [crew1, crew2, crew3]
+
+
 def main() -> None:
-    print("Space Mission Crew Validation")
-    print("=" * 41)
+    print("Space Mission Crew Validation\n")
+    print("=" * 40)
 
     valid_mission = SpaceMission(
         mission_id="M2026_MARS",
         mission_name="Mars Colony Establishment",
         destination="Mars",
-        launch_date="2027-01-15T06:00:00",
+        launch_date=datetime.fromisoformat("2027-01-15T06:00:00"),
         duration_days=900,
-        crew=[
-            {
-                "member_id": "C01",
-                "name": "Sarah Connor",
-                "rank": "commander",
-                "age": 42,
-                "specialization": "Mission Command",
-                "years_experience": 16,
-                "is_active": True,
-            },
-            {
-                "member_id": "C02",
-                "name": "John Smith",
-                "rank": "lieutenant",
-                "age": 34,
-                "specialization": "Navigation",
-                "years_experience": 7,
-                "is_active": True,
-            },
-            {
-                "member_id": "C03",
-                "name": "Alice Johnson",
-                "rank": "officer",
-                "age": 29,
-                "specialization": "Engineering",
-                "years_experience": 6,
-                "is_active": True,
-            },
-        ],
+        crew=crewData(),
         budget_millions=2500.0,
     )
     print_mission(valid_mission)
 
-    print("=" * 41)
+    print()
+    print("=" * 40)
     print("Expected validation error:")
     try:
         SpaceMission(
@@ -135,24 +139,24 @@ def main() -> None:
             launch_date=datetime.now(),
             duration_days=120,
             crew=[
-                {
-                    "member_id": "X01",
-                    "name": "Lena Park",
-                    "rank": "officer",
-                    "age": 31,
-                    "specialization": "Science",
-                    "years_experience": 8,
-                    "is_active": True,
-                },
-                {
-                    "member_id": "X02",
-                    "name": "Noah Reed",
-                    "rank": "lieutenant",
-                    "age": 33,
-                    "specialization": "Operations",
-                    "years_experience": 9,
-                    "is_active": True,
-                },
+                CrewMember(
+                    member_id="X01",
+                    name="Lena Park",
+                    rank=Rank.OFFICER,
+                    age=31,
+                    specialization="Science",
+                    years_experience=8,
+                    is_active=True,
+                ),
+                CrewMember(
+                    member_id="X02",
+                    name="Noah Reed",
+                    rank=Rank.LIEUTENANT,
+                    age=33,
+                    specialization="Operations",
+                    years_experience=9,
+                    is_active=True,
+                ),
             ],
             budget_millions=600.0,
         )
