@@ -25,7 +25,7 @@ class AlienContact(BaseModel):
     is_verified: bool = False
 
     @model_validator(mode="after")
-    def validate_business_rules(self) -> "AlienContact":
+    def validate_business_rules(self: "AlienContact") -> "AlienContact":
         if not self.contact_id.startswith("AC"):
             raise ValueError('Contact ID must start with "AC"')
 
@@ -60,11 +60,11 @@ def print_contact(contact: AlienContact) -> None:
 
 def main() -> None:
     print("Alien Contact Log Validation")
-    print("=" * 38)
+    print("=" * 40)
 
     valid_contact = AlienContact(
         contact_id="AC_2026_001",
-        timestamp="2026-03-22T08:15:00",
+        timestamp=datetime.fromisoformat("2026-03-22T08:15:00"),
         location="Area 51, Nevada",
         contact_type=ContactType.RADIO,
         signal_strength=8.5,
@@ -75,7 +75,7 @@ def main() -> None:
     )
     print_contact(valid_contact)
 
-    print("=" * 38)
+    print("=" * 40)
     print("Expected validation error:")
     try:
         AlienContact(

@@ -1,5 +1,5 @@
 from functools import reduce, partial, lru_cache, singledispatch
-from typing import Callable, Dict, List, Union, Any
+from typing import Callable, Dict, List, Any
 import operator
 
 

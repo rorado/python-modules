@@ -14,7 +14,6 @@ class SpaceStation(BaseModel):
     last_maintenance: datetime
     is_operational: bool = True
     notes: Optional[str] = Field(default=None, max_length=200)
-    userName: str = Field(min_length=3, max_length=20, default="admin")
 
 
 def print_station(station: SpaceStation) -> None:
@@ -26,7 +25,6 @@ def print_station(station: SpaceStation) -> None:
     print(f"Power: {station.power_level}%")
     print(f"Oxygen: {station.oxygen_level}%")
     print(f"Status: {status}")
-    print(f"userName: {station.userName}")
 
 
 def main() -> None:
@@ -39,13 +37,13 @@ def main() -> None:
         crew_size=6,
         power_level=85.5,
         oxygen_level=92.3,
-        last_maintenance="2026-03-21T10:30:00",
+        last_maintenance=datetime.fromisoformat("2026-10-09T10:00:00"),
         notes="Primary low-earth orbit research station.",
     )
     print_station(valid_station)
 
     print("=" * 40)
-    print("Expected validation error:")
+    print("\nExpected validation error:")
     try:
         SpaceStation(
             station_id="ISS002",
